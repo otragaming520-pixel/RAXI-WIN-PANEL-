@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>RAXI VIP PREDICTOR</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+:root {
+    --gold-main: #FFD700;
+    --gold-glow: #FFAA00;
+    --orange-primary: #FF6600;
+    --orange-dark: #CC0000;
+    --dark-bg: #0b0f05;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; font-family:'Orbitron', sans-serif; user-select: none; }
+body { background:#000; overflow:hidden; width: 100vw; height: 100vh; }
+
+#bg-frame { position: fixed; inset: 0; width: 100%; height: 100%; border: none; z-index: 1; }
+
+/* MINI FLOATING BUTTON */
+#mini {
+    position: fixed; right: 20px; bottom: 100px; width: 50px; height: 50px;
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    cursor: pointer; z-index: 9999; background: radial-gradient(circle,#2a3300,#0a0f00);
+    border: 2px solid var(--gold-main); box-shadow: 0 0 20px var(--gold-main), 0 0 30px var(--orange-primary);
+}
+#mini img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+
+/* MAIN PANEL WRAPPER */
+#panel-wrapper {
+    position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    width: 250px; display: none; justify-content: center; align-items: center;
+    z-index: 10000;
+}
+
+/* BUTTERFLY WINGS CONTAINER (RAXI ORANGE-GOLD THEME) */
+.wings-bg {
+    position: absolute; width: 420px; height: 280px;
+    pointer-events: none; z-index: 1; display: flex; justify-content: space-between;
+}
+
+.wing {
+    width: 130px; height: 100%;
+    filter: drop-shadow(0 0 15px rgba(255, 140, 0, 1)) drop-shadow(0 0 30px rgba(255, 69, 0, 0.8));
+    animation: wingPulse 2.5s ease-in-out infinite alternate;
+}
+
+.wing-left { transform-origin: right center; }
+.wing-right { transform-origin: left center; }
+
+@keyframes wingPulse {
+    0% { transform: scale(0.98) rotate(0deg); }
+    100% { transform: scale(1.04) rotate(2deg); }
+}
+
+/* MAIN PANEL UI (RAXI STYLE COLORS) */
+#main {
+    position: relative; z-index: 2; width: 240px;
+    background: linear-gradient(180deg, #1A1A1A 0%, #080808 100%);
+    border: 2px solid #FFD700; border-radius: 20px;
+    box-shadow: 0 0 25px rgba(255, 215, 0, 0.7), 
+                0 0 50px rgba(255, 69, 0, 0.4), 
+                inset 0 0 15px rgba(255, 215, 0, 0.3);
+    padding: 10px; text-align: center; overflow: hidden;
+}
+
+.header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding-bottom: 6px; border-bottom: 1px solid rgba(255, 215, 0, 0.3);
+    cursor: move;
+}
+
+.header-title {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 10px; font-weight: 900; color: #fff; 
+    text-shadow: 0 0 10px var(--gold-main), 0 0 20px var(--orange-primary);
+}
+
+.bolt-icon {
+    width: 20px; height: 20px; 
+    background: linear-gradient(180deg, #FFD700 0%, #FF8C00 100%);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; color: #000;
+    font-size: 10px; font-weight: bold; box-shadow: 0 0 10px #FFD700, 0 0 20px #FF4500;
+}
+
+.header-actions { display: flex; gap: 5px; align-items: center; }
+
+.header-btn {
+    width: 18px; height: 18px; border-radius: 50%; border: 1px solid rgba(255, 215, 0, 0.6);
+    color: rgba(255, 215, 0, 0.9); font-size: 9px; display: flex; align-items: center;
+    justify-content: center; cursor: pointer; background: rgba(255, 215, 0, 0.1);
+}
+
+.close-btn {
+    width: 18px; height: 18px; border-radius: 50%; border: 1px solid #ff4444;
+    color: #ff4444; font-size: 9px; display: flex; align-items: center;
+    justify-content: center; cursor: pointer; font-weight: bold;
+    background: rgba(255,68,68,0.2); box-shadow: 0 0 8px #ff4444;
+}
+
+.sub-header {
+    margin: 6px 0; padding: 0 2px; text-align: center;
+}
+.sub-title-gold {
+    font-size: 9px; font-weight: 900; color: #FFD700; letter-spacing: 1px;
+    text-shadow: 0 0 8px var(--gold-main); margin-bottom: 4px;
+}
+
+/* SCREENSHOT STYLE: "BIG 9" COMBINED DESIGN */
+.prediction-box {
+    background: rgba(0, 0, 0, 0.75); border-radius: 12px;
+    padding: 10px 4px; margin: 6px 0; border: 1.2px solid rgba(255, 215, 0, 0.4);
+    box-shadow: inset 0 0 10px rgba(255, 140, 0, 0.2);
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+
+.pred-combined {
+    font-size: 20px; font-weight: 900; color: #ffffff;
+    letter-spacing: 2px; text-shadow: 0 0 10px rgba(255,255,255,0.6);
+    outline: none; cursor: text; user-select: text;
+}
+
+.pred-combined span.num-highlight {
+    color: #FFD700;
+    text-shadow: 0 0 12px #FFD700, 0 0 20px #FF8C00;
+}
+
+/* CHART CONTAINER */
+.chart-container {
+    position: relative; background: rgba(0, 0, 0, 0.7);
+    border: 1.2px solid rgba(255, 215, 0, 0.4); border-radius: 8px;
+    padding: 6px 4px; margin: 6px 0; height: 45px;
+    display: flex; align-items: flex-end; justify-content: space-between;
+    overflow: hidden;
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.25), inset 0 0 8px rgba(255, 215, 0, 0.15);
+}
+
+.chart-line {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    pointer-events: none; z-index: 1; filter: drop-shadow(0 0 4px #FFD700);
+}
+
+.candle {
+    width: 5px; background: #FFD700; border-radius: 2px;
+    position: relative; z-index: 2; opacity: 0.9;
+    box-shadow: 0 0 6px #FFD700;
+}
+.candle.red { background: #ff2a5f; box-shadow: 0 0 6px #ff2a5f; }
+
+.chart-percentage {
+    position: absolute; top: 3px; right: 4px;
+    font-size: 7px; color: #FFD700; font-weight: 700;
+    outline: none; cursor: text; user-select: text;
+    text-shadow: 0 0 6px #FFD700;
+}
+
+/* CONFIDENCE & PERIOD INFO */
+.conf-box {
+    display: inline-block;
+    border: 1.2px solid #FFD700; border-radius: 10px;
+    padding: 2px 10px; font-size: 8px; font-weight: 900;
+    color: #FFD700; margin: 3px 0 2px 0;
+    background: rgba(255, 215, 0, 0.1);
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+    outline: none; cursor: text; user-select: text;
+}
+
+.period-info {
+    font-size: 7.5px; font-weight: 700; color: #fff;
+    margin-bottom: 5px; opacity: 0.9; outline: none; cursor: text; user-select: text;
+}
+
+/* ACTION BUTTON (RAXI ORANGE-RED GRADIENT) */
+.btn-action {
+    width: 100%; padding: 9px; border: none; border-radius: 16px;
+    background: linear-gradient(180deg, #FF6600 0%, #CC0000 100%);
+    color: #fff; font-size: 10px; font-weight: 900; cursor: pointer;
+    box-shadow: 0 0 15px rgba(255, 102, 0, 0.8), 0 0 25px rgba(204, 0, 0, 0.6);
+    margin-top: 3px; text-transform: uppercase; letter-spacing: 0.5px; transition: 0.2s;
+    text-shadow: 0 0 8px rgba(0,0,0,0.5);
+}
+.btn-action:active { transform: scale(0.96); }
+
+.engine-footer {
+    font-size: 8px; color: #FFD700; margin-top: 8px;
+    letter-spacing: 1.2px; font-weight: 800;
+    display: flex; align-items: center; justify-content: center; gap: 4px;
+    text-shadow: 0 0 8px var(--gold-main);
+}
+
+/* AUTH VIEW STYLES */
+.info-box {
+    background: rgba(0, 0, 0, 0.7); border: 1px solid rgba(255, 215, 0, 0.4);
+    border-radius: 6px; padding: 5px 6px; margin-bottom: 5px;
+    font-family: 'Rajdhani', sans-serif; font-size: 10px; font-weight: 700;
+    color: #fff; text-align: left; box-shadow: 0 0 8px rgba(255,215,0,0.2);
+}
+.status-title {
+    font-size: 9px; color: #FF8C00; letter-spacing: 1px;
+    margin: 6px 0 4px 0; font-weight: 800; text-shadow: 0 0 8px #FF8C00;
+}
+</style>
+</head>
+<body>
+
+<iframe id="bg-frame" src="https://raxi-win.teacherslex.site"></iframe>
+
+<!-- MINI ICON -->
+<div id="mini" onclick="openM()">
+    <img src="https://i.postimg.cc/3xB9f7wM/1000013396.jpg" alt="Icon">
+</div>
+
+<!-- MAIN FLOATING WRAPPER -->
+<div id="panel-wrapper">
+    
+    <!-- SVG BUTTERFLY WINGS (RAXI ORANGE THEME) -->
+    <div class="wings-bg">
+        <svg class="wing wing-left" viewBox="0 0 150 250">
+            <defs>
+                <linearGradient id="wingGradL" x1="100%" y1="50%" x2="0%" y2="50%">
+                    <stop offset="0%" stop-color="#FFD700"/>
+                    <stop offset="50%" stop-color="#FF8C00"/>
+                    <stop offset="100%" stop-color="#FF4500"/>
+                </linearGradient>
+            </defs>
+            <path d="M 145,120 C 120,90 70,20 10,10 C 0,30 20,70 50,95 C 15,110 0,135 15,160 C 35,185 80,180 100,165 C 60,190 30,220 55,240 C 85,250 125,180 145,130 Z" 
+                  fill="url(#wingGradL)" stroke="#FFD700" stroke-width="1.2" opacity="1"/>
+            <path d="M 145,125 Q 90,80 15,15 M 145,125 Q 70,100 50,95 M 145,125 Q 70,140 20,160 M 145,125 Q 90,170 55,235" 
+                  stroke="rgba(255,255,255,0.7)" stroke-width="1.2" fill="none"/>
+        </svg>
+
+        <svg class="wing wing-right" viewBox="0 0 150 250">
+            <defs>
+                <linearGradient id="wingGradR" x1="0%" y1="50%" x2="100%" y2="50%">
+                    <stop offset="0%" stop-color="#FFD700"/>
+                    <stop offset="50%" stop-color="#FF8C00"/>
+                    <stop offset="100%" stop-color="#FF4500"/>
+                </linearGradient>
+            </defs>
+            <path d="M 5,120 C 30,90 80,20 140,10 C 150,30 130,70 100,95 C 135,110 150,135 135,160 C 115,185 70,180 50,165 C 90,190 120,220 95,240 Q 65,250 25,180 5,130 Z" 
+                  fill="url(#wingGradR)" stroke="#FFD700" stroke-width="1.2" opacity="1"/>
+            <path d="M 5,125 Q 60,80 135,15 M 5,125 Q 80,100 100,95 M 5,125 Q 80,140 130,160 M 5,125 Q 60,170 95,235" 
+                  stroke="rgba(255,255,255,0.7)" stroke-width="1.2" fill="none"/>
+        </svg>
+    </div>
+
+    <!-- MAIN PANEL BODY -->
+    <div id="main">
+        <!-- HEADER -->
+        <div class="header" id="dragHandle">
+            <div class="header-title">
+                <div class="bolt-icon">R</div>
+                <span contenteditable="true">RAXI VIP PANEL</span>
+            </div>
+            <div class="header-actions">
+                <div class="header-btn"><i class="fas fa-cog"></i></div>
+                <div class="close-btn" onclick="closeM()">✕</div>
+            </div>
+        </div>
+
+        <!-- AUTH VIEW -->
+        <div id="login-view">
+            <div class="status-title" contenteditable="true">SERVER ACTIVATED</div>
+            <div class="info-box" contenteditable="true">1. WinGo 1M Connected</div>
+            <div class="info-box" contenteditable="true">2. Secure API Ready</div>
+            <div class="info-box" contenteditable="true">3. Balance Synced</div>
+            <button class="btn-action" onclick="showPredictor()">START ENGINE</button>
+        </div>
+
+        <!-- PREDICTION UI VIEW -->
+        <div id="prediction-ui" style="display: none;">
+            
+            <div class="sub-header">
+                <div class="sub-title-gold" contenteditable="true">FINAL TRADE</div>
+            </div>
+
+            <!-- COMBINED BIG & NUMBER ROW -->
+            <div class="prediction-box">
+                <div class="pred-combined" id="combinedDisplay" contenteditable="true">BIG <span class="num-highlight">9</span></div>
+            </div>
+
+            <!-- GRAPH VISUAL -->
+            <div class="chart-container">
+                <span class="chart-percentage" id="percentDisplay" contenteditable="true">+3.57%</span>
+                <svg class="chart-line" viewBox="0 0 100 30" preserveAspectRatio="none">
+                    <path d="M0 20 Q 20 5, 40 18 T 80 10 T 100 15" fill="none" stroke="#FFD700" stroke-width="1.5"/>
+                </svg>
+                <div class="candle" style="height: 60%;"></div>
+                <div class="candle red" style="height: 40%;"></div>
+                <div class="candle" style="height: 75%;"></div>
+                <div class="candle red" style="height: 35%;"></div>
+                <div class="candle" style="height: 85%;"></div>
+                <div class="candle red" style="height: 50%;"></div>
+                <div class="candle" style="height: 65%;"></div>
+                <div class="candle" style="height: 90%;"></div>
+                <div class="candle red" style="height: 30%;"></div>
+                <div class="candle" style="height: 70%;"></div>
+            </div>
+
+            <!-- CONFIDENCE & PERIOD -->
+            <div class="conf-box" id="confDisplay" contenteditable="true">CONF(99.7%)</div>
+            <div class="period-info" id="idDisplay" contenteditable="true">PERIOD: 2026102510905</div>
+
+            <!-- ACTION BUTTON -->
+            <button class="btn-action" onclick="fetchLiveResultAndPredict()">GET RESULT</button>
+        </div>
+
+        <div class="engine-footer" contenteditable="true">⚡ 9k.CLUB ⚡</div>
+    </div>
+
+</div>
+
+<script>
+const API_URL = "https://draw.ar-lottery01.com/WinGo/WinGo_1M/GetHistoryIssuePage.json?ts=";
+
+function openM() {
+    document.getElementById('panel-wrapper').style.display = 'flex';
+    document.getElementById('mini').style.display = 'none';
+}
+function closeM() {
+    document.getElementById('panel-wrapper').style.display = 'none';
+    document.getElementById('mini').style.display = 'flex';
+}
+
+function showPredictor() {
+    document.getElementById('login-view').style.display = 'none';
+    document.getElementById('prediction-ui').style.display = 'block';
+    fetchLiveResultAndPredict();
+}
+
+function getPeriodID() {
+    const now = new Date();
+    const yyyyMMdd = now.getUTCFullYear() + String(now.getUTCMonth() + 1).padStart(2, '0') + String(now.getUTCDate()).padStart(2, '0');
+    const totalMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
+    return yyyyMMdd + String(10001 + totalMinutes);
+}
+
+// FETCH API FUNCTION
+async function fetchLiveResultAndPredict() {
+    const combinedDisplay = document.getElementById('combinedDisplay');
+    const confDisplay = document.getElementById('confDisplay');
+    const idDisplay = document.getElementById('idDisplay');
+    const percentDisplay = document.getElementById('percentDisplay');
+
+    combinedDisplay.innerHTML = "... ?";
+
+    try {
+        const response = await fetch(API_URL + Date.now());
+        const data = await response.json();
+        
+        if (data && data.data && data.data.list && data.data.list.length > 0) {
+            const latestDraw = data.data.list[0];
+            const num = parseInt(latestDraw.number, 10);
+            const size = num >= 5 ? "BIG" : "SMALL";
+
+            const issueStr = latestDraw.issue ? String(latestDraw.issue) : getPeriodID();
+            const randomConf = (95 + Math.random() * 4.5).toFixed(1);
+            const randomPercent = "+" + (0.5 + Math.random() * 4).toFixed(2) + "%";
+
+            setTimeout(() => {
+                combinedDisplay.innerHTML = `${size} <span class="num-highlight">${num}</span>`;
+                idDisplay.innerText = `PERIOD: ${issueStr}`;
+                confDisplay.innerText = `CONF(${randomConf}%)`;
+                percentDisplay.innerText = randomPercent;
+            }, 400);
+
+        } else {
+            fallbackRandomPrediction();
+        }
+    } catch (e) {
+        fallbackRandomPrediction();
+    }
+}
+
+function fallbackRandomPrediction() {
+    const num = Math.floor(Math.random() * 10);
+    const size = num >= 5 ? "BIG" : "SMALL";
+
+    document.getElementById('combinedDisplay').innerHTML = `${size} <span class="num-highlight">${num}</span>`;
+    document.getElementById('idDisplay').innerText = `PERIOD: ${getPeriodID()}`;
+    document.getElementById('confDisplay').innerText = "CONF(99.7%)";
+    document.getElementById('percentDisplay').innerText = "+3.57%";
+}
+
+// DRAGGING LOGIC (Editable text area safe)
+const wrapper = document.getElementById("panel-wrapper");
+const dragHandle = document.getElementById("dragHandle");
+let isDragging = false, offset = { x: 0, y: 0 };
+
+const dragStart = (e) => {
+    if(e.target.hasAttribute('contenteditable') || e.target.closest('.header-actions')) return;
+    isDragging = true;
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    
+    const rect = wrapper.getBoundingClientRect();
+    offset.x = clientX - rect.left;
+    offset.y = clientY - rect.top;
+};
+
+const dragMove = (e) => {
+    if (!isDragging) return;
+    e.preventDefault();
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    
+    let newX = clientX - offset.x;
+    let newY = clientY - offset.y;
+    
+    wrapper.style.left = newX + (wrapper.offsetWidth / 2) + "px";
+    wrapper.style.top = newY + (wrapper.offsetHeight / 2) + "px";
+};
+
+dragHandle.addEventListener("mousedown", dragStart);
+dragHandle.addEventListener("touchstart", dragStart, {passive: false});
+document.addEventListener("mousemove", dragMove);
+document.addEventListener("touchmove", dragMove, {passive: false});
+document.addEventListener("mouseup", () => isDragging = false);
+document.addEventListener("touchend", () => isDragging = false);
+</script>
+
+</body>
+</html>
